@@ -11,8 +11,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 public class ValidationUtils implements ApplicationContextAware {
@@ -25,20 +27,21 @@ public class ValidationUtils implements ApplicationContextAware {
     }
 
     public static CheckResult check(Object arg) {
-        Set<ConstraintViolation<Object>> failInfos = validate(arg);
-        if (failInfos == null || failInfos.isEmpty()) {
-            return CheckResult.pass();
-        }
-        return CheckResult.deny(failInfos);
+        Set<ConstraintViolation<?>> failInfos = validate(arg);
+        return failInfos.isEmpty() ? CheckResult.pass() : CheckResult.deny(failInfos);
     }
 
-    private static Set<ConstraintViolation<Object>> validate(Object arg) {
-        Set<ConstraintViolation<Object>> r = new HashSet<>();
+    private static Set<ConstraintViolation<?>> validate(Object arg) {
+        Set<ConstraintViolation<?>> r = new HashSet<>();
         if (arg == null) {
             return r;
         }
-        if (arg instanceof Collection) {
-            for (Object item : (Collection<Object>) arg) {
+        if (arg.getClass().isArray()) {
+            for (int i = 0; i < Array.getLength(arg); i++) {
+                r.addAll(validate(Array.get(arg, i)));
+            }
+        } else if (arg instanceof Iterable) {
+            for (Object item : (Iterable<?>) arg) {
                 r.addAll(validate(item));
             }
             return r;
@@ -47,8 +50,7 @@ public class ValidationUtils implements ApplicationContextAware {
         if (validAnn == null) {
             return r;
         }
-        Class<?>[] groupArrays = validAnn.value();
-        Set<ConstraintViolation<Object>> resultSet = groupArrays.length == 0 ? validator.validate(arg) : validator.validate(arg, groupArrays);
+        Set<ConstraintViolation<Object>> resultSet = validator.validate(arg, validAnn.value());
         if (resultSet != null && !resultSet.isEmpty()) {
             r.addAll(resultSet);
         }

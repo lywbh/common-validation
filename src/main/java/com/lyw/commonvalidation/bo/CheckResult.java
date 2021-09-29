@@ -7,7 +7,7 @@ public class CheckResult {
 
     private boolean pass;
 
-    private Set<ConstraintViolation<Object>> failInfos;
+    private Set<ConstraintViolation<?>> failInfos;
 
     public static CheckResult pass() {
         CheckResult result = new CheckResult();
@@ -15,7 +15,7 @@ public class CheckResult {
         return result;
     }
 
-    public static CheckResult deny(Set<ConstraintViolation<Object>> failInfos) {
+    public static CheckResult deny(Set<ConstraintViolation<?>> failInfos) {
         CheckResult result = new CheckResult();
         result.pass = false;
         result.failInfos = failInfos;
@@ -26,7 +26,11 @@ public class CheckResult {
         return pass;
     }
 
-    public Set<ConstraintViolation<Object>> getFailInfos() {
+    public boolean isDeny() {
+        return !pass;
+    }
+
+    public Set<ConstraintViolation<?>> getFailInfos() {
         return failInfos;
     }
 
