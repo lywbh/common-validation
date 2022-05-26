@@ -21,11 +21,6 @@ public class ValidationUtils implements ApplicationContextAware {
 
     private static Validator validator;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        validator = applicationContext.getBean(LocalValidatorFactoryBean.class);
-    }
-
     public static CheckResult check(Object arg) {
         Set<ConstraintViolation<?>> failInfos = validate(arg);
         return failInfos.isEmpty() ? CheckResult.pass() : CheckResult.deny(failInfos);
@@ -59,6 +54,11 @@ public class ValidationUtils implements ApplicationContextAware {
             r.addAll(validate(ReflectionUtils.getField(field, arg)));
         }
         return r;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        validator = applicationContext.getBean(LocalValidatorFactoryBean.class);
     }
 
 }
