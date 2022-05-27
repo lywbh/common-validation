@@ -5,9 +5,9 @@
 ## Installation
 ```xml
 <dependency>
-    <groupId>com.lyw</groupId>
+    <groupId>io.github.lywbh</groupId>
     <artifactId>common-validation</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -25,14 +25,42 @@ public class TestClass {
 
 }
 ```
-##### 然后调用校验即可，配合AOP食用更佳
+
+##### 调用校验即可
 ```java
-TestClass test = new TestClass();
-test.setMobile("123456");
-test.setMoney("abc123");
-CheckResult result = ValidationUtils.check(testClass);
+class Main {
+
+    public static void main(String[] args) {
+        TestClass test = new TestClass();
+        test.setMobile("123456");
+        test.setMoney("abc123");
+        CheckResult result = ValidationUtils.check(testClass);
+        if (result.isDeny()) {
+            // result里能拿到不合法的字段签名和值，以及注解配置的message
+        }
+    }
+    
+}
 ```
-##### result里能拿到不合法的字段签名和值，以及注解配置的message
+
+##### 配合AOP食用更佳
+```java
+@Aspect
+@Component
+class ControllerAspect {
+    
+    @Before(value = "pointCut()")
+    public void before(JoinPoint joinPoint) {
+        if (joinPoint.getArgs() != null) {
+            CheckResult result = ValidationUtils.check(joinPoint.getArgs());
+            if (result.isDeny()) {
+                // 校验失败，抛出异常
+            }
+        }
+    }
+    
+}
+```
 
 ##### 可以参照annotation和validator包，自定义自己的注解和校验规则
 
