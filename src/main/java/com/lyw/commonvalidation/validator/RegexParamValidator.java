@@ -19,7 +19,7 @@ public class RegexParamValidator implements ConstraintValidator<RegexParam, Stri
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return !required || pattern.matcher(s).matches();
+        return !required || (s != null && pattern.matcher(s).matches());
     }
 
 }
