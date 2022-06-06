@@ -7,7 +7,7 @@
 <dependency>
     <groupId>com.lyw</groupId>
     <artifactId>common-validation</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
