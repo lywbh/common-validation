@@ -13,8 +13,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Configuration
 public class ValidationUtils implements ApplicationContextAware {
@@ -23,7 +28,10 @@ public class ValidationUtils implements ApplicationContextAware {
 
     public static CheckResult check(Object arg) {
         Set<ConstraintViolation<?>> failInfos = validate(arg);
-        return failInfos.isEmpty() ? CheckResult.pass() : CheckResult.deny(failInfos);
+        Collection<ConstraintViolation<?>> violations = failInfos.stream()
+                .collect(Collectors.collectingAndThen(Collectors.toCollection(() ->
+                        new TreeSet<>(Comparator.comparing(ConstraintViolation::getMessage))), ArrayList::new));
+        return failInfos.isEmpty() ? CheckResult.pass() : CheckResult.deny(violations);
     }
 
     private static Set<ConstraintViolation<?>> validate(Object arg) {

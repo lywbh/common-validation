@@ -1,13 +1,13 @@
 package com.lyw.commonvalidation.bo;
 
 import javax.validation.ConstraintViolation;
-import java.util.Set;
+import java.util.Collection;
 
 public class CheckResult {
 
     private boolean pass;
 
-    private Set<ConstraintViolation<?>> failInfos;
+    private Collection<ConstraintViolation<?>> failInfos;
 
     public static CheckResult pass() {
         CheckResult result = new CheckResult();
@@ -15,7 +15,7 @@ public class CheckResult {
         return result;
     }
 
-    public static CheckResult deny(Set<ConstraintViolation<?>> failInfos) {
+    public static CheckResult deny(Collection<ConstraintViolation<?>> failInfos) {
         CheckResult result = new CheckResult();
         result.pass = false;
         result.failInfos = failInfos;
@@ -30,7 +30,7 @@ public class CheckResult {
         return !pass;
     }
 
-    public Set<ConstraintViolation<?>> getFailInfos() {
+    public Collection<ConstraintViolation<?>> getFailInfos() {
         return failInfos;
     }
 

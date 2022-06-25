@@ -6,7 +6,7 @@
 
     <groupId>io.github.lywbh</groupId>
     <artifactId>common-validation</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <url>https://github.com/lywbh/common-validation</url>
     <description>SpringBoot参数校验工具</description>
 
